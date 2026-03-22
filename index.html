@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vigil'Gel · Pact 38270</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0f14;color:#e6edf3;font-family:-apple-system,Helvetica,sans-serif;max-width:540px;margin:0 auto;padding-bottom:40px}
+/* HEADER */
+.hd{background:#0d1117;border-bottom:1px solid #242f3f;padding:14px}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.logo-t{font-family:Georgia,serif;font-size:20px;color:#d4a843}
+.logo-s{font-size:11px;color:#8b949e;margin-top:1px}
+.src-row{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.src-pill{font-size:8px;border:1px solid #d4a84355;border-radius:10px;padding:2px 6px;color:#d4a843;background:#131920}
+.heure{background:rgba(212,168,67,.08);border:1px solid rgba(212,168,67,.2);border-radius:6px;padding:5px 10px;font-size:10px;color:#d4a843;margin-bottom:5px;font-family:monospace}
+.maj{font-size:9px;color:#444d56;font-family:monospace}
+/* ALERTE */
+.alerte{margin:10px 12px 0;border:1px solid rgba(248,81,73,.6);background:rgba(248,81,73,.12);border-radius:10px;padding:12px}
+.alerte-t{color:#f85149;font-size:13px;font-weight:700;margin-bottom:5px}
+.alerte-x{color:#ff8b85;font-size:11px;line-height:1.6}
+/* BANNER SOIR */
+.bn{margin:10px 12px 0;border-radius:10px;padding:12px;display:flex;gap:10px}
+.bn-ico{font-size:22px;flex-shrink:0}
+.bn-t{font-size:13px;font-weight:700;margin-bottom:3px}
+.bn-s{font-size:11px;line-height:1.5}
+.bn-src{font-size:9px;margin-top:2px;opacity:.7}
+.bn.high{background:rgba(248,81,73,.14);border:1px solid rgba(248,81,73,.5)}
+.bn.medium{background:rgba(227,179,65,.12);border:1px solid rgba(227,179,65,.5)}
+.bn.watch{background:rgba(240,134,58,.12);border:1px solid rgba(240,134,58,.4)}
+.bn.low{background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.4)}
+.bn.high .bn-t,.bn.high .bn-s{color:#f85149}
+.bn.medium .bn-t,.bn.medium .bn-s{color:#e3b341}
+.bn.watch .bn-t,.bn.watch .bn-s{color:#f0863a}
+.bn.low .bn-t,.bn.low .bn-s{color:#3dd68c}
+/* SEUILS */
+.seuils{margin:10px 12px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.seuil{background:#131920;border:1px solid #242f3f;border-radius:8px;padding:8px}
+.seuil-l{font-size:9px;color:#8b949e;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.seuil-v{font-family:Georgia,serif;font-size:19px;line-height:1;margin-bottom:2px}
+.seuil-s{font-size:9px;color:#444d56}
+/* ONGLETS */
+.tabs{margin:12px 12px 0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px}
+.tab{background:#131920;border:1px solid #242f3f;border-radius:8px;padding:8px 2px;font-size:10px;font-weight:600;color:#8b949e;cursor:pointer;line-height:1.3;width:100%;-webkit-appearance:none;font-family:-apple-system,Helvetica,sans-serif}
+.tab.on{background:#d4a843;border-color:#d4a843;color:#000}
+.page{padding:10px 12px;display:none}
+.page.on{display:block}
+/* CARTES */
+.card{border-radius:10px;overflow:hidden;margin-bottom:8px;border:1px solid}
+.card.high{background:rgba(248,81,73,.12);border-left:4px solid #f85149;border-color:rgba(248,81,73,.4)}
+.card.medium{background:rgba(227,179,65,.10);border-left:4px solid #e3b341;border-color:rgba(227,179,65,.4)}
+.card.watch{background:rgba(240,134,58,.10);border-left:4px solid #f0863a;border-color:rgba(240,134,58,.4)}
+.card.low{background:rgba(61,214,140,.06);border-left:4px solid #3dd68c;border-color:rgba(61,214,140,.3)}
+.card.ce-soir{border-color:#d4a843!important}
+.card-head{padding:12px;cursor:pointer}
+.row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.jour-nom{font-size:14px;font-weight:700;color:#e6edf3}
+.ce-soir-tag{font-size:9px;background:#d4a843;color:#000;border-radius:3px;padding:1px 5px;font-weight:700;margin-left:6px;text-transform:uppercase}
+.badge{border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;white-space:nowrap;border:1px solid}
+.badge.high{background:#3a1210;color:#f85149;border-color:#f85149}
+.badge.medium{background:#3a2c0e;color:#e3b341;border-color:#e3b341}
+.badge.watch{background:#3a1f0a;color:#f0863a;border-color:#f0863a}
+.badge.low{background:#132b1e;color:#3dd68c;border-color:#3dd68c}
+.metriques{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px}
+.m{background:rgba(0,0,0,.22);border-radius:7px;padding:8px 10px}
+.m-l{font-size:9px;color:#8b949e;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;line-height:1.3}
+.m-v{font-family:monospace;font-size:15px;font-weight:700}
+.row3{display:flex;justify-content:space-between;align-items:center}
+.ciel-info{display:flex;align-items:center;gap:6px;font-size:11px;color:#8b949e}
+.fiab-w{text-align:right}
+.fiab-l{font-size:9px;color:#444d56;margin-bottom:3px}
+.fiab-b{width:60px;height:4px;background:#242f3f;border-radius:2px;overflow:hidden}
+.fiab-f{height:100%;border-radius:2px}
+.expand-hint{text-align:center;margin-top:8px;font-size:10px;color:#444d56}
+/* DÉTAIL */
+.detail{border-top:1px solid rgba(255,255,255,.06);padding:12px;display:none}
+.detail.ouvert{display:block}
+.detail-l{font-size:11px;color:#8b949e;margin-bottom:8px}
+.heures{display:flex;gap:4px;overflow-x:scroll;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:10px}
+.h-bloc{flex-shrink:0;width:40px;text-align:center;border-radius:6px;padding:5px 2px}
+.h-heure{font-size:9px;color:#444d56;font-family:monospace;margin-bottom:2px}
+.h-temp{font-size:12px;font-weight:700;font-family:monospace}
+.info-ligne{background:rgba(0,0,0,.22);border-radius:7px;padding:8px 10px;margin-bottom:7px;font-size:12px;color:#8b949e;line-height:1.5}
+.action{border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6;border:1px solid}
+.action.high{background:rgba(248,81,73,.08);border-color:rgba(248,81,73,.3);color:#f85149}
+.action.medium,.action.watch{background:rgba(227,179,65,.07);border-color:rgba(227,179,65,.3);color:#e3b341}
+.action.low{background:rgba(61,214,140,.05);border-color:rgba(61,214,140,.25);color:#3dd68c}
+.action-t{font-weight:700;display:block;margin-bottom:4px}
+.consensus-t{font-size:10px;color:#8b949e;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.consensus-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px}
+.c-src{background:rgba(0,0,0,.25);border-radius:6px;padding:6px 4px;text-align:center}
+.c-src-n{font-size:9px;color:#8b949e;margin-bottom:3px;line-height:1.2}
+.c-src-v{font-family:monospace;font-size:13px;font-weight:700}
+.accord{border-radius:6px;padding:6px 10px;font-size:10px;text-align:center;margin-bottom:8px}
+.accord.ok{background:rgba(61,214,140,.06);border:1px solid rgba(61,214,140,.2);color:#3dd68c}
+.accord.warn{background:rgba(227,179,65,.07);border:1px solid rgba(227,179,65,.2);color:#e3b341}
+.src-toggle{font-size:10px;color:#444d56;cursor:pointer;text-decoration:underline;display:block;margin-top:2px}
+.src-liste{display:none;margin-top:7px;flex-direction:column;gap:5px}
+.src-item{background:rgba(0,0,0,.25);border-radius:7px;padding:8px 10px}
+.src-n{font-size:10px;font-weight:600;color:#8b949e;margin-bottom:2px}
+.src-t{font-size:11px;color:#444d56;line-height:1.4;margin-bottom:3px}
+.src-a{font-size:9px;color:#d4a843;text-decoration:none;font-family:monospace}
+/* GUIDE */
+.gc{background:#131920;border:1px solid #242f3f;border-radius:10px;padding:15px;margin-bottom:10px}
+.gc-t{font-family:Georgia,serif;color:#d4a843;font-size:15px;margin-bottom:10px}
+.gc-x{font-size:13px;color:#8b949e;line-height:1.6}
+.scale{border-left:3px solid;border-radius:7px;padding:8px 11px;margin-bottom:6px}
+.scale-r{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.scale-n{font-family:monospace;font-weight:700;font-size:13px}
+.scale-l{font-size:10px;font-weight:700}
+.scale-a{font-size:11px;color:#8b949e}
+/* PROTOCOLE */
+.pc{background:#131920;border:1px solid #242f3f;border-radius:10px;padding:15px;margin-bottom:10px}
+.pc-h{display:flex;align-items:center;gap:10px;margin-bottom:11px;padding-bottom:10px;border-bottom:1px solid #242f3f}
+.pc-t{font-size:14px;font-weight:600;color:#e6edf3}
+.pc-s{font-size:11px;color:#8b949e}
+.ps{display:flex;gap:9px;margin-bottom:9px;align-items:flex-start}
+.ps-n{width:19px;height:19px;border-radius:50%;background:#1a2230;border:1px solid #2e3d52;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#d4a843;flex-shrink:0;margin-top:1px;font-family:monospace}
+.ps-t{font-size:13px;color:#8b949e;line-height:1.5}
+.ps-t strong{color:#e6edf3}
+/* CHECKLIST */
+.cl-item{background:#131920;border:1px solid #242f3f;border-radius:9px;padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:11px;cursor:pointer}
+.cl-item.ok{background:rgba(61,214,140,.05);border-color:rgba(61,214,140,.3)}
+.cl-box{width:22px;height:22px;border-radius:6px;flex-shrink:0;border:2px solid #2e3d52;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;background:transparent}
+.cl-item.ok .cl-box{background:#3dd68c;border-color:#3dd68c}
+.cl-txt{font-size:13px;line-height:1.4}
+.cl-txt strong{color:#e6edf3;display:block}
+.cl-item.ok .cl-txt strong{color:#8b949e;text-decoration:line-through}
+.cl-txt span{font-size:11px;color:#444d56}
+.cl-prog{background:#131920;border:1px solid #242f3f;border-radius:9px;padding:12px;margin-top:4px}
+.cl-prog-l{font-size:12px;color:#8b949e;margin-bottom:6px}
+.cl-prog-b{height:5px;background:#242f3f;border-radius:3px;overflow:hidden}
+.cl-prog-f{height:100%;background:#3dd68c;border-radius:3px}
+/* FOOTER */
+.ft{border-top:1px solid #242f3f;padding:12px 14px;font-size:9px;color:#444d56;text-align:center;line-height:1.7;margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hd">
+  <div class="logo">
+    <span style="font-size:28px">🍑</span>
+    <div><div class="logo-t">Vigil'Gel</div><div class="logo-s">Antigel abricots · Chute des pétales · Pact 38270</div></div>
+  </div>
+  <div class="src-row">
+    <span class="src-pill">🌱 LaMétéoAgricole</span>
+    <span class="src-pill">🇫🇷 MF/AROME</span>
+    <span class="src-pill">📺 La Chaîne Météo</span>
+    <span class="src-pill">🌐 Météociel</span>
+    <span class="src-pill">🔵 Meteoblue</span>
+    <span class="src-pill">🌍 ICON/GFS</span>
+  </div>
+  <div class="heure" id="heure">🕐 …</div>
+  <div class="maj">📅 Relevé 22/03/2026 · 6 sources · MAJ à demander à Claude le 24/03</div>
+</div>
+
+<!-- ALERTE CRITIQUE -->
+<div class="alerte">
+  <div class="alerte-t">🚨 ALERTE MAJEURE — 26 au 28 mars</div>
+  <div class="alerte-x">Intrusion d'air polaire confirmée par <strong>6 sources</strong> : minimales entre <strong>0°C et −1°C</strong>, soit −5 à −7°C sous les normales.<br>Risque de gel avéré sur jeunes fruits (seuil −0,5°C).<br>⚠️ Demandez une MAJ à Claude le <strong>24 mars</strong>.</div>
+</div>
+
+<!-- BANNER -->
+<div class="bn" id="bn-div">
+  <span class="bn-ico" id="bn-ico">🍑</span>
+  <div>
+    <div class="bn-t" id="bn-titre">…</div>
+    <div class="bn-s" id="bn-sous">…</div>
+    <div class="bn-src">6 sources : 🌱 LMA · 🇫🇷 MF · 📺 LCM · 🌐 MC · 🔵 MB · 🌍 ICON</div>
+  </div>
+</div>
+
+<!-- SEUILS -->
+<div class="seuils">
+  <div class="seuil"><div class="seuil-l">Seuil alerte</div><div class="seuil-v" style="color:#e3b341">+0,8°C</div><div class="seuil-s">Chute pétales</div></div>
+  <div class="seuil"><div class="seuil-l">Seuil critique</div><div class="seuil-v" style="color:#f85149">−0,5°C</div><div class="seuil-s">Jeunes fruits</div></div>
+  <div class="seuil"><div class="seuil-l">Corr. sol</div><div class="seuil-v" style="color:#58a6ff">−1,5°C</div><div class="seuil-s">Nuit claire</div></div>
+</div>
+
+<!-- ONGLETS -->
+<div class="tabs">
+  <button class="tab on" onclick="onglet('prev',this)">📅 Prévisions</button>
+  <button class="tab" onclick="onglet('guide',this)">🌡️ Guide</button>
+  <button class="tab" onclick="onglet('proto',this)">📋 Protocole</button>
+  <button class="tab" onclick="onglet('check',this)">✅ Checklist</button>
+</div>
+
+<!-- PAGE PRÉVISIONS -->
+<div class="page on" id="page-prev">
+  <div id="jours-container"></div>
+  <div style="font-size:10px;color:#444d56;text-align:center;margin-top:4px;line-height:1.7">
+    Fenêtre de risque : 20h→8h · Tableau recalé automatiquement à 8h<br>
+    ⚠️ <strong style="color:#f0863a">ALERTE 26–28 mars</strong> · Demandez une MAJ à Claude le 24 mars
+  </div>
+</div>
+
+<!-- PAGE GUIDE -->
+<div class="page" id="page-guide">
+  <div class="gc">
+    <div class="gc-t">🌡️ Positionnement du thermomètre</div>
+    <p class="gc-x">Placez-le à <strong style="color:#e6edf3">60–80 cm de hauteur</strong>, en plein air, à l'abri du vent et éloigné des murs. Lisez à <strong style="color:#e6edf3">22h, 3h et 5h30</strong> les nuits à risque.</p>
+  </div>
+  <div class="gc">
+    <div class="gc-t">📊 Échelle de décision</div>
+    <div class="scale" style="background:rgba(248,81,73,.18);border-color:#f85149"><div class="scale-r"><span class="scale-n" style="color:#f85149">≤ −0,5°C</span><span class="scale-l" style="color:#f85149">GEL — PERTES GRAVES</span></div><div class="scale-a">Bougies allumées. Restez jusqu'au lever du soleil.</div></div>
+    <div class="scale" style="background:rgba(248,81,73,.10);border-color:#ff8b85"><div class="scale-r"><span class="scale-n" style="color:#ff8b85">−0,5→0°C</span><span class="scale-l" style="color:#ff8b85">CRITIQUE</span></div><div class="scale-a">Allumez toutes les bougies immédiatement.</div></div>
+    <div class="scale" style="background:rgba(227,179,65,.15);border-color:#e3b341"><div class="scale-r"><span class="scale-n" style="color:#e3b341">0→+1°C</span><span class="scale-l" style="color:#e3b341">ALLUMEZ</span></div><div class="scale-a">Allumez sans attendre — T° peut encore baisser.</div></div>
+    <div class="scale" style="background:rgba(227,179,65,.08);border-color:#c9a030"><div class="scale-r"><span class="scale-n" style="color:#c9a030">+1→+3°C</span><span class="scale-l" style="color:#c9a030">SURVEILLEZ</span></div><div class="scale-a">Bougies prêtes. Revérifiez à 3h.</div></div>
+    <div class="scale" style="background:rgba(61,214,140,.08);border-color:#3dd68c"><div class="scale-r"><span class="scale-n" style="color:#3dd68c">+3°C et +</span><span class="scale-l" style="color:#3dd68c">REPOS</span></div><div class="scale-a">Pas d'action. Revérifiez à 4h si ciel dégagé.</div></div>
+  </div>
+  <div class="gc">
+    <div class="gc-t">⚠️ Gel de rayonnement — Plateau Bièvre 262m</div>
+    <p class="gc-x">Les nuits <strong style="color:#e6edf3">claires et sans vent</strong>, la T° réelle à 60 cm peut être <strong style="color:#e3b341">1,5°C plus froide</strong> que la prévision officielle.<br><br>Indicateur : ciel étoilé + vent nul + givre sur l'herbe.</p>
+  </div>
+  <div class="gc">
+    <div class="gc-t">🛰️ Les 6 sources utilisées</div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#8b949e;line-height:1.5">
+      <div style="background:rgba(0,0,0,.2);border-radius:7px;padding:8px"><strong style="color:#e6edf3">🌱 LaMétéoAgricole</strong> — Températures horaires AROME Pact 38270. La plus précise localement.</div>
+      <div style="background:rgba(0,0,0,.2);border-radius:7px;padding:8px"><strong style="color:#e6edf3">🇫🇷 Météo-France / AROME 1,3 km</strong> — Modèle officiel français. MAJ 4×/jour.</div>
+      <div style="background:rgba(0,0,0,.2);border-radius:7px;padding:8px"><strong style="color:#e6edf3">📺 La Chaîne Météo</strong> — ECMWF, prévisions Beaurepaire 38270.</div>
+      <div style="background:rgba(0,0,0,.2);border-radius:7px;padding:8px"><strong style="color:#e6edf3">🌐 Météociel</strong> — WRF 2km + GFS + ARPEGE croisés pour Pact.</div>
+      <div style="background:rgba(0,0,0,.2);border-radius:7px;padding:8px"><strong style="color:#e6edf3">🔵 Meteoblue</strong> — Agrégateur multi-modèles avec score de fiabilité par jour.</div>
+      <div style="background:rgba(0,0,0,.2);border-radius:7px;padding:8px"><strong style="color:#e6edf3">🌍 ICON/GFS</strong> — Modèles DWD Allemagne (7km) + NOAA (13km), validation J+5→J+10.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE PROTOCOLE -->
+<div class="page" id="page-proto">
+  <div class="pc">
+    <div class="pc-h"><span style="font-size:20px">🌆</span><div><div class="pc-t">La veille au soir</div><div class="pc-s">Avant 22h si nuit à risque</div></div></div>
+    <div class="ps"><div class="ps-n">1</div><div class="ps-t">Consultez ce tableau — <strong>6 sources croisées</strong>.</div></div>
+    <div class="ps"><div class="ps-n">2</div><div class="ps-t"><strong>Min &lt; +3°C et ciel dégagé</strong> → positionnez les bougies avant 22h.</div></div>
+    <div class="ps"><div class="ps-n">3</div><div class="ps-t">Stock : <strong>~400 bougies/ha</strong> · prévoir 2–3 nuits.</div></div>
+    <div class="ps"><div class="ps-n">4</div><div class="ps-t">Alarmes : <strong>22h00 · 03h00 · 05h30</strong>.</div></div>
+  </div>
+  <div class="pc">
+    <div class="pc-h"><span style="font-size:20px">🌙</span><div><div class="pc-t">Pendant la nuit</div><div class="pc-s">Réactivité = clé de la réussite</div></div></div>
+    <div class="ps"><div class="ps-n">1</div><div class="ps-t">Lisez le thermomètre à <strong>60–80 cm</strong> à 22h.</div></div>
+    <div class="ps"><div class="ps-n">2</div><div class="ps-t"><strong>Si ≤ +1°C</strong> → allumez immédiatement.</div></div>
+    <div class="ps"><div class="ps-n">3</div><div class="ps-t">Revérifiez à 3h — minimum <strong>avant l'aube (5h–6h)</strong>.</div></div>
+    <div class="ps"><div class="ps-n">4</div><div class="ps-t">Éteignez quand <strong>T° ≥ +2°C ET soleil levé</strong>.</div></div>
+  </div>
+  <div class="pc">
+    <div class="pc-h"><span style="font-size:20px">🕯️</span><div><div class="pc-t">Logistique bougies</div><div class="pc-s">Rappels essentiels</div></div></div>
+    <div class="ps"><div class="ps-n">1</div><div class="ps-t"><strong>~400 bougies/ha</strong> → gain +2 à +7°C.</div></div>
+    <div class="ps"><div class="ps-n">2</div><div class="ps-t">Durée <strong>8–10h par bougie 6L</strong>.</div></div>
+    <div class="ps"><div class="ps-n">3</div><div class="ps-t"><strong>Allumage tardif = perte</strong> irréversible.</div></div>
+    <div class="ps"><div class="ps-n">4</div><div class="ps-t">~8€/bougie — <strong>anticipez les stocks</strong>.</div></div>
+  </div>
+</div>
+
+<!-- PAGE CHECKLIST -->
+<div class="page" id="page-check">
+  <p style="font-size:12px;color:#8b949e;margin-bottom:10px;line-height:1.5">Cochez chaque action. Conservées pendant votre session.</p>
+  <div id="cl-container"></div>
+  <div class="cl-prog">
+    <div class="cl-prog-l" id="cl-prog-txt">0/8 actions effectuées</div>
+    <div class="cl-prog-b"><div class="cl-prog-f" id="cl-prog-f" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="ft">
+  🌱 LaMétéoAgricole · 🇫🇷 MF/AROME · 📺 La Chaîne Météo · 🌐 Météociel · 🔵 Meteoblue · 🌍 ICON/GFS<br>
+  Seuils CTIFL/INRAE · Pact 38270 · 262m · Relevé 22/03/2026
+</div>
+
+<script>
+// ── DONNÉES (6 sources croisées, relevé 22/03/2026) ──────────────
+var JOURS = ["Dim.","Lun.","Mar.","Mer.","Jeu.","Ven.","Sam."];
+var MOIS  = ["jan","fév","mars","avr","mai","juin","juil","août","sep","oct","nov","déc"];
+
+var DATA = [
+  {date:"2026-03-22",max:10,ciel:"🌧️",cielTxt:"Averses 80%",nuages:96,vent:15,rafales:35,pluie:5,hum:81,fiab:90,
+   nh:[6,6,6,6,6,5,4,4,4,4,5],hd:[21,22,23,0,1,2,3,4,5,6,7],
+   ms:[4,5,4,5,4,5],
+   s:["LMA/AROME : min 5°C, averses 3–9mm, SSO 15km/h r.35","LCM : min 4°C, couvert pluie, −2°C/normale","Météociel : min 5°C, pluie modérée SSE","Meteoblue : min 4°C, ciel couvert 3–8mm","ICON/GFS : min 5°C, convergence des modèles"]},
+  {date:"2026-03-23",max:15,ciel:"⛅",cielTxt:"Partiel. nuageux",nuages:47,vent:15,rafales:30,pluie:0,hum:72,fiab:85,
+   nh:[6,6,6,6,6,5,4,4,4,4,4],hd:[21,22,23,0,1,2,3,4,5,6,7],
+   ms:[3,3,3,4,3,4],
+   s:["LMA/AROME : min 3°C, brouillard 3h–8h puis éclaircies N 15km/h","LCM : min 3°C, partiel. nuageux −1°C/normale","Météociel : min 3–4°C, brouillard puis dégagement","Meteoblue : min 3°C, partiel. nuageux fiabilité 85%","ICON/GFS : min 3–4°C, bon accord entre modèles"]},
+  {date:"2026-03-24",max:16,ciel:"⛅",cielTxt:"Partiel. nuageux",nuages:43,vent:10,rafales:25,pluie:0,hum:69,fiab:78,
+   nh:[10,8,6,5,4,3,3,3,3,3,3],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[3,3,2,3,3,3],
+   s:["MF/AROME : min 3°C, partiel. nuageux N 10km/h r.25, 1022hPa","LCM : min 2°C, nuages et éclaircies, normale saison","Météociel : min 2–3°C, ciel variable N faible","Meteoblue : min 3°C, fiabilité 78%","ICON/GFS : min 3°C, bonne convergence modèles"]},
+  {date:"2026-03-25",max:17,ciel:"🌦️",cielTxt:"Averses pluie/neige 90%",nuages:37,vent:15,rafales:50,pluie:1.5,hum:68,fiab:65,
+   nh:[11,9,7,6,5,4,4,3,3,3,3],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[3,3,3,3,4,3],
+   s:["MF/AROME : min 3°C, pluie/neige NNO 15km/h r.50, 1015hPa","LCM : min 3°C, averses 1–2mm rafales 50km/h","Météociel : min 3°C, pluie+neige vent NNO soutenu","Meteoblue : min 3–4°C, averses fiabilité 65%","ICON/GFS : min 3°C, entrée perturbation froide en soirée"]},
+  {date:"2026-03-26",max:8,ciel:"🌧️",cielTxt:"Pluie/neige 100% — ⚠️ ALERTE",nuages:82,vent:30,rafales:50,pluie:4.5,hum:70,fiab:48,
+   nh:[5,4,3,2,1,1,1,1,1,1,2],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[2,2,2,2,2,2],
+   s:["MF/AROME : min 2°C, pluie+neige 2–7mm NNO 30km/h r.50","LCM : min 2°C, averses fortes −5°C/normale","Météociel : min 2°C, temps perturbé vent N soutenu","Meteoblue : min 2°C, 6 sources convergent sur froid","ICON/GFS : min 2°C, intrusion polaire confirmée"]},
+  {date:"2026-03-27",max:8,ciel:"🌨️",cielTxt:"Averses pluie/neige — 🚨 GEL",nuages:75,vent:30,rafales:50,pluie:1.5,hum:66,fiab:30,
+   nh:[4,3,2,1,0,-1,-1,-1,-1,0,0],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[-1,0,0,0,0,-1],
+   s:["MF/AROME : min 0°C, averses pluie+neige N 30km/h r.50 −6°C/normale","LCM : min 0°C, −6°C sous normale, averses 1–2mm","Météociel : min 0 à −1°C, vent N fort 30–60km/h","Meteoblue : min 0°C, fiabilité 30% — scénario + froid possible","ICON/GFS : min −1°C, GFS plus froid qu'ICON cette nuit"]},
+  {date:"2026-03-28",max:9,ciel:"☁️",cielTxt:"Couvert, averses — 🚨 GEL",nuages:94,vent:25,rafales:55,pluie:1,hum:78,fiab:25,
+   nh:[4,3,2,1,0,-1,-1,-1,-1,0,0],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[-1,0,0,0,0,-1],
+   s:["MF/AROME : min 0°C, couvert averses N 25km/h r.55 −7°C/normale","LCM : min 0°C, ciel couvert averses 1mm vent fort","Météociel : min 0 à −1°C, très nuageux N 25–65km/h","Meteoblue : min 0°C, fiabilité 25% — incertitude élevée","ICON/GFS : min −1°C, ICON et GFS convergent sur gel possible"]},
+  {date:"2026-03-29",max:9,ciel:"🌦️",cielTxt:"Nuageux, averses 50%",nuages:83,vent:25,rafales:65,pluie:0.5,hum:61,fiab:15,
+   nh:[5,4,3,2,1,1,1,1,1,1,2],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[1,1,1,1,1,1],
+   s:["MF/AROME : min 1°C, nuageux averses N 25km/h r.65","LCM : min 1°C, averses 0–1mm vent N fort","Météociel : min 1°C, passages nuageux","Meteoblue : min 1°C, incertitude élevée J+7","ICON/GFS : min 1°C, accord entre modèles"]},
+  {date:"2026-03-30",max:10,ciel:"🌦️",cielTxt:"Nuageux, averses 30%",nuages:86,vent:20,rafales:50,pluie:0,hum:63,fiab:10,
+   nh:[5,4,3,2,1,1,1,1,1,1,2],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[1,1,1,1,2,1],
+   s:["MF/AROME : min 1°C, nuageux N 20km/h","LCM : min 1°C, nuages","Météociel : min 1–2°C, très nuageux","Meteoblue : min 2°C, incertitude max J+8","ICON/GFS : min 1°C, données indicatives"]},
+  {date:"2026-03-31",max:14,ciel:"🌤️",cielTxt:"Peu nuageux, retour douceur",nuages:56,vent:25,rafales:50,pluie:0,hum:68,fiab:8,
+   nh:[8,6,5,4,4,4,4,4,4,4,5],hd:[20,21,22,23,0,1,2,3,4,5,6],
+   ms:[4,4,4,4,4,4],
+   s:["MF/AROME : min 4°C, peu nuageux N 25km/h","LCM : min 4°C, retour douceur","Météociel : min 4°C, ciel variable","Meteoblue : min 4°C, fiabilité très faible J+9","ICON/GFS : min 4°C, données indicatives"]}
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────
+function sg(t){ return t > 0 ? "+" : ""; }
+function pad(n){ return n < 10 ? "0" + n : "" + n; }
+function solEst(t, nuages, vent){
+  if(nuages < 35 && vent < 15) return t - 1.5;
+  if(nuages > 60) return t;
+  return t - 0.5;
+}
+function evalRisque(minT, sol){
+  if(sol <= -0.5 || minT <= 0.5) return "high";
+  if(sol <= 0   || minT <= 1.5) return "high";
+  if(sol <= 0.8 || minT <= 2.5) return "medium";
+  if(minT <= 4) return "watch";
+  return "low";
+}
+function couleurT(t){
+  if(t <= -0.5) return "#f85149";
+  if(t <= 0)    return "#ff8b85";
+  if(t <= 1.5)  return "#e3b341";
+  if(t <= 3)    return "#c9a030";
+  if(t <= 4)    return "#8b949e";
+  return "#3dd68c";
+}
+function bgHeure(t){
+  if(t <= -0.5) return "rgba(248,81,73,.35)";
+  if(t <= 0)    return "rgba(248,81,73,.2)";
+  if(t <= 1.5)  return "rgba(227,179,65,.2)";
+  if(t <= 3)    return "rgba(227,179,65,.09)";
+  return "rgba(255,255,255,.05)";
+}
+function consensus(ms){
+  var s = 0;
+  for(var i=0;i<ms.length;i++) s += ms[i];
+  var avg = s / ms.length;
+  var mn = ms[0], mx = ms[0];
+  for(var i=1;i<ms.length;i++){ if(ms[i]<mn) mn=ms[i]; if(ms[i]>mx) mx=ms[i]; }
+  var ecart = mx - mn;
+  return { avg: avg.toFixed(1), ecart: ecart, ok: ecart <= 1.5 };
+}
+function pivot(){
+  var now = new Date();
+  var p = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if(now.getHours() >= 8) p.setDate(p.getDate() + 1);
+  return p;
+}
+
+// ── CONSTRUCTION DES JOURS ───────────────────────────────────────
+function construireListe(){
+  var piv = pivot();
+  var liste = [];
+  for(var i=0;i<DATA.length;i++){
+    var d = DATA[i];
+    var parts = d.date.split("-");
+    var ref = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var delta = Math.round((ref - piv) / 86400000);
+    if(delta < 0 || delta > 9) continue;
+    var minN = d.nh[0];
+    for(var j=1;j<d.nh.length;j++) if(d.nh[j] < minN) minN = d.nh[j];
+    var sol = solEst(minN, d.nuages, d.vent);
+    var r = evalRisque(minN, sol);
+    var fi = Math.min(d.fiab, Math.max(5, Math.round(90 - delta * 9)));
+    var c = consensus(d.ms);
+    var nuitClaire = d.nuages < 35 && d.vent < 15;
+    liste.push({
+      ref: ref,
+      jour: JOURS[ref.getDay()],
+      dateStr: ref.getDate() + " " + MOIS[ref.getMonth()],
+      premier: delta === 0,
+      maxT: d.max, minN: minN, sol: sol, nuitClaire: nuitClaire,
+      risque: r, fiab: fi, cons: c,
+      ciel: d.ciel, cielTxt: d.cielTxt,
+      nuages: d.nuages, vent: d.vent, rafales: d.rafales,
+      pluie: d.pluie, hum: d.hum,
+      nh: d.nh, hd: d.hd, ms: d.ms, sources: d.s
+    });
+  }
+  return liste;
+}
+
+// ── RENDU BANNER ─────────────────────────────────────────────────
+function renderBanner(j){
+  if(!j) return;
+  var el = document.getElementById("bn-div");
+  var ico = {high:"🚨",medium:"⚠️",watch:"⚠️",low:"✅"};
+  var ti = {high:"ALERTE CE SOIR",medium:"VIGILANCE CE SOIR",watch:"VIGILANCE CE SOIR",low:"PAS DE RISQUE CE SOIR"};
+  el.className = "bn " + j.risque;
+  document.getElementById("bn-ico").textContent = ico[j.risque];
+  document.getElementById("bn-titre").textContent = ti[j.risque];
+  document.getElementById("bn-sous").textContent =
+    "Consensus 6 sources : " + sg(parseFloat(j.cons.avg)) + j.cons.avg + "°C · Sol estimé " + sg(j.sol) + j.sol.toFixed(1) + "°C";
+}
+
+// ── RENDU JOURS ──────────────────────────────────────────────────
+var etatsDetail = {};
+var etatsSource = {};
+
+function renderJours(liste){
+  var cont = document.getElementById("jours-container");
+  cont.innerHTML = "";
+  var RL = {high:"🔴 ÉLEVÉ",medium:"🟡 MODÉRÉ",watch:"🟠 VIGILANCE",low:"🟢 FAIBLE"};
+  var AT = {high:"🚨 ACTION REQUISE",medium:"⚠️ VIGILANCE",watch:"⚠️ VIGILANCE",low:"✅ PAS D'ACTION"};
+  var srcNoms = ["🌱 LMA","🇫🇷 MF","📺 LCM","🌐 MC","🔵 MB","🌍 ICN"];
+  var srcNomsFull = ["🌱 LaMétéoAgricole / AROME Pact","📺 La Chaîne Météo — Beaurepaire","🌐 Météociel — WRF + GFS + ARPEGE","🔵 Meteoblue — Multi-modèles Pact","🌍 ICON DWD + GFS NOAA"];
+  var srcURLs = [
+    "https://www.lameteoagricole.net/previsions-meteo-agricole/Pact-38270.html",
+    "https://www.lachainemeteo.com/meteo-france/ville-214532/previsions-meteo-beaurepaire-aujourdhui",
+    "https://www.meteociel.fr/previsions/13455/pact.htm",
+    "https://www.meteoblue.com/fr/meteo/10-jours/pact_france_2988850",
+    "https://www.meteociel.fr/modeles/icon-d2.php"
+  ];
+  var fc = function(f){ return f>=70?"#3dd68c":f>=40?"#e3b341":"#f85149"; };
+
+  for(var i=0;i<liste.length;i++){
+    var d = liste[i];
+    var idx = i;
+    var id = "jour-" + idx;
+    var idSrc = "src-" + idx;
+
+    // Heures
+    var heuresHtml = "";
+    for(var h=0;h<d.nh.length;h++){
+      heuresHtml += '<div class="h-bloc" style="background:' + bgHeure(d.nh[h]) + '">'
+        + '<div class="h-heure">' + pad(d.hd[h]) + 'h</div>'
+        + '<div class="h-temp" style="color:' + couleurT(d.nh[h]) + '">' + sg(d.nh[h]) + d.nh[h].toFixed(1) + '°</div>'
+        + '</div>';
+    }
+
+    // Consensus grille
+    var consHtml = "";
+    for(var k=0;k<d.ms.length;k++){
+      consHtml += '<div class="c-src">'
+        + '<div class="c-src-n">' + srcNoms[k] + '</div>'
+        + '<div class="c-src-v" style="color:' + couleurT(d.ms[k]) + '">' + sg(d.ms[k]) + d.ms[k] + '°</div>'
+        + '</div>';
+    }
+    var accordHtml = d.cons.ok
+      ? '<div class="accord ok">✅ Accord (écart ' + d.cons.ecart + '°C) — Retenu : ' + sg(parseFloat(d.cons.avg)) + d.cons.avg + '°C</div>'
+      : '<div class="accord warn">⚠️ Divergence ' + d.cons.ecart + '°C — Favorisez le scénario le plus froid</div>';
+
+    // Sources
+    var srcHtml = "";
+    for(var s=0;s<d.sources.length;s++){
+      srcHtml += '<div class="src-item">'
+        + '<div class="src-n">' + srcNomsFull[s] + '</div>'
+        + '<div class="src-t">' + d.sources[s] + '</div>'
+        + '<a class="src-a" href="' + srcURLs[s] + '" target="_blank">↗ Consulter</a>'
+        + '</div>';
+    }
+
+    // Action
+    var ac = d.risque === "high"
+      ? "Min. " + sg(d.minN) + d.minN.toFixed(1) + "°C · Sol " + sg(d.sol) + d.sol.toFixed(1) + "°C" + (d.nuitClaire ? " (gel de rayonnement)" : "") + "<br>Positionnez les bougies AVANT 22h. Lisez à 22h, 3h et 5h30. Allumez si ≤ +1°C."
+      : d.risque === "low"
+      ? "Min. " + sg(d.minN) + d.minN.toFixed(1) + "°C · Sol " + sg(d.sol) + d.sol.toFixed(1) + "°C — Pas d'action requise."
+      : "Min. " + sg(d.minN) + d.minN.toFixed(1) + "°C · Sol " + sg(d.sol) + d.sol.toFixed(1) + "°C<br>Tenez les bougies prêtes. Vérifiez à 22h et 3h.";
+
+    var html = '<div class="card ' + d.risque + (d.premier ? " ce-soir" : "") + '">'
+      + '<div class="card-head" onclick="bascule(\'' + id + '\')">'
+      + '<div class="row1">'
+      + '<div><span class="jour-nom">' + d.jour + ' ' + d.dateStr + '</span>' + (d.premier ? '<span class="ce-soir-tag">Ce soir</span>' : '') + '</div>'
+      + '<span class="badge ' + d.risque + '">' + RL[d.risque] + '</span>'
+      + '</div>'
+      + '<div class="metriques">'
+      + '<div class="m"><div class="m-l">Max journée</div><div class="m-v" style="color:#8b949e">' + sg(d.maxT) + d.maxT + '°C</div></div>'
+      + '<div class="m"><div class="m-l">Min consensus 6 sources</div><div class="m-v" style="color:' + couleurT(parseFloat(d.cons.avg)) + '">' + sg(parseFloat(d.cons.avg)) + d.cons.avg + '°C</div></div>'
+      + '<div class="m"><div class="m-l">Sol estimé (60 cm)</div><div class="m-v" style="color:' + couleurT(d.sol) + '">' + sg(d.sol) + d.sol.toFixed(1) + '°C</div></div>'
+      + '<div class="m"><div class="m-l">Humidité</div><div class="m-v" style="color:#8b949e">' + d.hum + '%</div></div>'
+      + '</div>'
+      + '<div class="row3">'
+      + '<div class="ciel-info"><span style="font-size:18px">' + d.ciel + '</span><span>' + d.cielTxt + '</span></div>'
+      + '<div class="fiab-w"><div class="fiab-l">Fiabilité ' + d.fiab + '%</div><div class="fiab-b"><div class="fiab-f" style="width:' + d.fiab + '%;background:' + fc(d.fiab) + '"></div></div></div>'
+      + '</div>'
+      + '<div class="expand-hint">▼ Détail heures + consensus 6 sources</div>'
+      + '</div>'
+      + '<div class="detail" id="' + id + '">'
+      + '<div class="detail-l">🕐 Nuit du ' + d.dateStr + ' — de 20h à 8h</div>'
+      + '<div class="heures">' + heuresHtml + '</div>'
+      + '<div class="consensus-t">Consensus min nocturne — 6 sources</div>'
+      + '<div class="consensus-g">' + consHtml + '</div>'
+      + accordHtml
+      + '<div class="info-ligne">🌡️ Sol corrigé : <strong style="color:' + couleurT(d.sol) + ';font-family:monospace">' + sg(d.sol) + d.sol.toFixed(1) + '°C</strong> · ' + (d.nuitClaire ? "Nuit claire → −1,5°C appliqué" : "Nuages/vent → correction réduite") + '</div>'
+      + '<div class="info-ligne">💨 Vent ' + d.vent + ' km/h · Rafales ' + d.rafales + ' km/h · 🌧️ ' + d.pluie.toFixed(1) + ' mm · ☁️ ' + d.nuages + '%</div>'
+      + '<div class="action ' + d.risque + '"><span class="action-t">' + AT[d.risque] + '</span>' + ac + '</div>'
+      + '<span class="src-toggle" onclick="basculeSrc(\'' + idSrc + '\', this)">▼ Détail des 5 sources</span>'
+      + '<div class="src-liste" id="' + idSrc + '">' + srcHtml + '</div>'
+      + '</div>'
+      + '</div>';
+
+    cont.innerHTML += html;
+  }
+}
+
+function bascule(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var ouvert = el.classList.contains("ouvert");
+  el.classList.toggle("ouvert", !ouvert);
+  var hint = el.previousElementSibling.querySelector(".expand-hint");
+  if(hint) hint.textContent = !ouvert ? "▲ Réduire" : "▼ Détail heures + consensus 6 sources";
+}
+
+function basculeSrc(id, btn){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var ouvert = el.style.display === "flex";
+  el.style.display = ouvert ? "none" : "flex";
+  btn.textContent = ouvert ? "▼ Détail des 5 sources" : "▲ Masquer les sources";
+}
+
+// ── ONGLETS ───────────────────────────────────────────────────────
+function onglet(id, btn){
+  var pages = document.querySelectorAll(".page");
+  for(var i=0;i<pages.length;i++) pages[i].classList.remove("on");
+  var tabs = document.querySelectorAll(".tab");
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.remove("on");
+  document.getElementById("page-" + id).classList.add("on");
+  btn.classList.add("on");
+}
+
+// ── CHECKLIST ─────────────────────────────────────────────────────
+var CL = [
+  ["Stock de bougies vérifié","~400 bougies/ha pour 2–3 nuits"],
+  ["Bougies positionnées avant 22h","Si risque, réparties uniformément"],
+  ["Thermomètre à 60–80 cm","Abri du vent, hors de tout mur"],
+  ["Alarmes programmées","22h00 · 03h00 · 05h30"],
+  ["Lecture 22h effectuée","Si ≤ +1°C → allumage immédiat"],
+  ["Lecture 3h effectuée","Minimum vers 5h–6h du matin"],
+  ["Bougies éteintes après l'aube","T° ≥ +2°C et soleil bien levé"],
+  ["MAJ demandée à Claude","Le 24/03 pour affiner l'alerte 26–28 mars"]
+];
+var coches = [false,false,false,false,false,false,false,false];
+
+function renderCL(){
+  var html = "";
+  for(var i=0;i<CL.length;i++){
+    html += '<div class="cl-item' + (coches[i] ? " ok" : "") + '" id="cl-' + i + '" onclick="cocherCL(' + i + ')">'
+      + '<div class="cl-box">' + (coches[i] ? "✓" : "") + '</div>'
+      + '<div class="cl-txt"><strong>' + CL[i][0] + '</strong><span>' + CL[i][1] + '</span></div>'
+      + '</div>';
+  }
+  document.getElementById("cl-container").innerHTML = html;
+  majProgressionCL();
+}
+
+function cocherCL(i){
+  coches[i] = !coches[i];
+  var el = document.getElementById("cl-" + i);
+  el.classList.toggle("ok", coches[i]);
+  el.querySelector(".cl-box").textContent = coches[i] ? "✓" : "";
+  majProgressionCL();
+}
+
+function majProgressionCL(){
+  var n = 0;
+  for(var i=0;i<coches.length;i++) if(coches[i]) n++;
+  document.getElementById("cl-prog-txt").textContent = n + "/" + CL.length + " actions effectuées";
+  document.getElementById("cl-prog-f").style.width = Math.round(n / CL.length * 100) + "%";
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+function init(){
+  var now = new Date();
+  var h = now.getHours();
+  var hStr = pad(h) + "h" + pad(now.getMinutes());
+  var dateStr = now.toLocaleDateString("fr-FR");
+
+  document.getElementById("heure").textContent =
+    h < 8 ? "🕐 Nuit en cours · risque actif jusqu'à 8h"
+           : "🕐 Nuit terminée · prochaine fenêtre de risque : ce soir";
+
+  var jours = construireListe();
+  renderBanner(jours.length > 0 ? jours[0] : null);
+  renderJours(jours);
+  renderCL();
+
+  // Ouvrir automatiquement le premier jour (ce soir)
+  if(jours.length > 0){
+    var premierDetail = document.getElementById("jour-0");
+    if(premierDetail) premierDetail.classList.add("ouvert");
+  }
+}
+
+init();
+</script>
+</body>
+</html>
